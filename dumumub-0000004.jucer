@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="RWzBqH" name="dumumub-0000004" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="1" jucerFormatVersion="1" companyWebsite="www.dumumub.com"
+              companyEmail="hi@dumumub.com" pluginManufacturer="dumumub">
+  <MAINGROUP id="IDzJb7" name="dumumub-0000004">
+    <FILE id="J5Ryuj" name="DuruSans-Regular.ttf" compile="0" resource="1"
+          file="../../../../Downloads/Duru_Sans/DuruSans-Regular.ttf"/>
+    <GROUP id="{593DA401-2601-D832-9C48-071FFB31959C}" name="GUI IMAGES">
+      <FILE id="NphaPN" name="TITLE HOVER.png" compile="0" resource="1" file="GUI IMAGES/TITLE HOVER.png"/>
+      <FILE id="ojuTp4" name="TITLE PRESS.png" compile="0" resource="1" file="GUI IMAGES/TITLE PRESS.png"/>
+      <FILE id="aZSg6K" name="TITLE.png" compile="0" resource="1" file="GUI IMAGES/TITLE.png"/>
+      <FILE id="OlRh0R" name="CANVAS BORDER.png" compile="0" resource="1"
+            file="GUI IMAGES/CANVAS BORDER.png"/>
+      <FILE id="GCCcxJ" name="MOVE HOVER.png" compile="0" resource="1" file="GUI IMAGES/MOVE HOVER.png"/>
+      <FILE id="HITLpx" name="MOVE PRESS.png" compile="0" resource="1" file="GUI IMAGES/MOVE PRESS.png"/>
+      <FILE id="WT1Rdv" name="MOVE.png" compile="0" resource="1" file="GUI IMAGES/MOVE.png"/>
+      <FILE id="xE3tih" name="UNDO HOVER.png" compile="0" resource="1" file="GUI IMAGES/UNDO HOVER.png"/>
+      <FILE id="JqMsYR" name="UNDO PRESS.png" compile="0" resource="1" file="GUI IMAGES/UNDO PRESS.png"/>
+      <FILE id="GCUzLG" name="UNDO.png" compile="0" resource="1" file="GUI IMAGES/UNDO.png"/>
+    </GROUP>
+    <GROUP id="{B382AF1D-7F00-2FFE-D5DD-5EA6E3B8D69F}" name="Source">
+      <GROUP id="{8DA6E175-F83A-4F7E-C02B-334A5D87B4BD}" name="Editor">
+        <FILE id="ZVYJPe" name="CanvasBorder.h" compile="0" resource="0" file="Source/CanvasBorder.h"/>
+        <GROUP id="{02097C48-1046-B954-B140-F8C283AC348A}" name="DragBar">
+          <FILE id="h92mvE" name="DestinationBar.cpp" compile="1" resource="0"
+                file="Source/DestinationBar.cpp"/>
+          <FILE id="O83FuE" name="DestinationBar.h" compile="0" resource="0"
+                file="Source/DestinationBar.h"/>
+        </GROUP>
+        <GROUP id="{5E215778-229A-BB74-0C0B-0162C4D43C0B}" name="SelectionBar">
+          <FILE id="fU4tWF" name="SelectionBar.cpp" compile="1" resource="0"
+                file="Source/SelectionBar.cpp"/>
+          <FILE id="l00BOF" name="SelectionBar.h" compile="0" resource="0" file="Source/SelectionBar.h"/>
+        </GROUP>
+        <GROUP id="{506DD867-A9A5-1215-A236-36336C4D804C}" name="FreqDisplay">
+          <GROUP id="{A3509584-8756-33FF-F6C3-1E23EC5AB59C}" name="FreqBar">
+            <FILE id="BmYqSG" name="FreqBar.h" compile="0" resource="0" file="Source/FreqBar.h"/>
+            <FILE id="LfArEb" name="FreqBar.cpp" compile="1" resource="0" file="Source/FreqBar.cpp"/>
+          </GROUP>
+          <FILE id="V35Nhi" name="FreqDisplay.h" compile="0" resource="0" file="Source/FreqDisplay.h"/>
+          <FILE id="ieeKjV" name="FreqDisplay.cpp" compile="1" resource="0" file="Source/FreqDisplay.cpp"/>
+        </GROUP>
+        <FILE id="lUNCTK" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+        <FILE id="Eekp8N" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/PluginEditor.cpp"/>
+      </GROUP>
+      <GROUP id="{715567FA-4C75-A6C7-07BD-C0F266BCB5D1}" name="Processor">
+        <FILE id="Lw2mwO" name="PluginProcessor.cpp" compile="1" resource="0"
+              file="Source/PluginProcessor.cpp"/>
+        <FILE id="pnBZJ3" name="PluginProcessor.h" compile="0" resource="0"
+              file="Source/PluginProcessor.h"/>
+      </GROUP>
+      <FILE id="jZTTXi" name="OverlappingFFTProcessor.h" compile="0" resource="0"
+            file="Source/OverlappingFFTProcessor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="dumumub-0000004"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="dumumub-0000004"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+</JUCERPROJECT>

@@ -1,0 +1,137 @@
+@startuml
+!theme vibrant
+/'==========================================================================='/
+class Dumumub0000004AudioProcessor {
+- binMap : int[1024]
+- binMags : float[1024]
+- fftProcessor : MyProcessor
+- currentVolume : float[2]
+
++ prepareToPlay(sampleRate: double, samplesPerBlock: int) : void
++ processBlock(buffer: AudioBuffer<float>, midiMessages: MidiBuffer) : void
++ getBinMap() : int[1024]
++ editBinMap(selectedIndexs: int[2], newStart: int) : void
++ processFrameInBuffer (maxNumChannels: int): void OVERRIDE
++ setBinMags() : void
++ getBinMags() : float[1024]
++ resetBinMap() : void
++ getCurrentVolume() : float[2]
++ setCurrentVolume(float L, float R) : void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class Dumumub0000004AudioProcessorEditor {
+- audioProcessor: Dumumub0000004AudioProcessor
+- freqDisplay : FreqDisplay
+- gainSlider : Slider
+- hedingButton : Button
+- helpDisplay : Image
+- resetButton : Button
+
++ paint(g: Graphics) : void
++ resized() : void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class FreqDisplay {
+- audioProcessor: Dumumub0000004AudioProcessor
+- bars : FreqBar[1024]
+
++ paint(g: Graphics) : void
++ setFreqBarsHeights() : void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class FreqBar {
+- height : float
+- homeIndex : int
+- colour : Colour
+
++ paint(g: Graphics) : void
++ calculateColour() : void
++ setHeight(newHeight: int) void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class EditTool {
+- audioProcessor: Dumumub0000004AudioProcessor
+- dragBar : DragBar
+- selctionBar : SelectionBar
+- selectedIndexs : int[2]
+
++ paint(g: Graphics) : void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class DragBar {
+- xPos : int
+
++ paint(g: Graphics) : void
++ getParent() : EditTool
++ tellToolOfMovement() : void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class SelectionBar {
+- startPos : int
+- endPos : int
+
++ paint(g: Graphics) : void
++ getParent() : EditTool
++ tellToolOfStartAndEnd() : void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class OverlappingFFTProcessor {
+# fft : dsp::FFT
+# window : std::vector<float>
+# fftInOutBuffer : AudioBuffer<float>
+# fftSize : const int
+# hopSize : const int
+- nChIn : int nChIn;
+- nChOut : int nChOut;
+- notYetUsedAudioData : AudioBuffer<float>
+- outputBuffer : AudioBuffer<float>
+- outputOffset : int
+- notYetUsedAudioDataCount = 0 : int
+
++ processFrameInBuffer (maxNumChannels: int): void VIRTUAL
++ prepare (const double sampleRate, const int maximumBlockSize, const int numInputChannels, const int numOutputChannels) : void
++ process (const dsp::AudioBlock<const float>& inputBlock, dsp::AudioBlock<float>& outputBlock) : void
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class MyProcessor {
+- binMags : float[1024]
+
++ processFrameInBuffer (maxNumChannels: int): void OVERRIDE
++ getBinMags (): float[1024]
+}
+/'==========================================================================='/
+/'==========================================================================='/
+class VolumeDisplay {
+- audioProcessor: Dumumub0000004AudioProcessor
+
++ paint(g: Graphics) : void
+}
+/'==========================================================================='/
+
+/'==========================================================================='/
+Dumumub0000004AudioProcessor "1" --> "1" MyProcessor : calls process()
+
+MyProcessor "1" --> "1" OverlappingFFTProcessor : inherits
+
+Dumumub0000004AudioProcessorEditor "1" --> "1" Dumumub0000004AudioProcessor : accesses
+Dumumub0000004AudioProcessorEditor "1" --> "1" FreqDisplay : paints
+Dumumub0000004AudioProcessorEditor "1" --> "1" EditTool : paints
+
+FreqDisplay "1" --> "1" Dumumub0000004AudioProcessor : calls getBinMap(), getBinMags()
+FreqDisplay "1" --> "512" FreqBar : paints
+
+EditTool "1" --> "1" Dumumub0000004AudioProcessor : calls editBinMap()
+EditTool "1" --> "1" DragBar : paints
+EditTool "1" --> "1" SelectionBar : paints
+
+VolumeDisplay "1" --> "1" Dumumub0000004AudioProcessor : calls getCurrentVolume()
+/'==========================================================================='/
+@enduml
