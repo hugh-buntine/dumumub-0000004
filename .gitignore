@@ -18,6 +18,9 @@ Source/tester
 *.tmp
 *.temp
 
+# UML source files (keep PNG, exclude text source)
+UML.txt
+
 # Ableton/DAW session files
 TESTER SESSION Project/
 
