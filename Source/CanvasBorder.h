@@ -21,11 +21,6 @@ public:
     CanvasBorder()
     {
         borderImage = ImageCache::getFromMemory(BinaryData::CANVAS_BORDER_png, BinaryData::CANVAS_BORDER_pngSize);
-        if (borderImage.isNull())
-        {
-            Logger::writeToLog("Failed to load image");
-        }
-
     }
 
     ~CanvasBorder() override
@@ -34,16 +29,14 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        g.drawImageAt(borderImage, 0, 0);
+        g.drawImage(borderImage, 0, 0, getWidth(), getHeight(),
+                    0, 0, borderImage.getWidth(), borderImage.getHeight());
 
 
     }
 
     void resized() override
     {
-        // This method is where you should set the bounds of any child
-        // components that your component contains..
-
     }
 
 private:

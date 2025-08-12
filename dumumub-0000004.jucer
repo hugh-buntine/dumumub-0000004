@@ -15,12 +15,18 @@
       <FILE id="GCCcxJ" name="MOVE HOVER.png" compile="0" resource="1" file="GUI IMAGES/MOVE HOVER.png"/>
       <FILE id="HITLpx" name="MOVE PRESS.png" compile="0" resource="1" file="GUI IMAGES/MOVE PRESS.png"/>
       <FILE id="WT1Rdv" name="MOVE.png" compile="0" resource="1" file="GUI IMAGES/MOVE.png"/>
+      <FILE id="aktSu7" name="HELP.png" compile="0" resource="1" file="GUI IMAGES/HELP.png"/>
       <FILE id="xE3tih" name="UNDO HOVER.png" compile="0" resource="1" file="GUI IMAGES/UNDO HOVER.png"/>
+      <FILE id="amrp2s" name="BACKGROUND.png" compile="0" resource="1" file="GUI IMAGES/BACKGROUND.png"/>
       <FILE id="JqMsYR" name="UNDO PRESS.png" compile="0" resource="1" file="GUI IMAGES/UNDO PRESS.png"/>
       <FILE id="GCUzLG" name="UNDO.png" compile="0" resource="1" file="GUI IMAGES/UNDO.png"/>
     </GROUP>
     <GROUP id="{B382AF1D-7F00-2FFE-D5DD-5EA6E3B8D69F}" name="Source">
       <GROUP id="{8DA6E175-F83A-4F7E-C02B-334A5D87B4BD}" name="Editor">
+        <GROUP id="{0A840247-4594-DAB9-C737-3E34803D2DC5}" name="Help">
+          <FILE id="FaYDv8" name="Help.cpp" compile="1" resource="0" file="Source/Help.cpp"/>
+          <FILE id="zGCb3a" name="Help.h" compile="0" resource="0" file="Source/Help.h"/>
+        </GROUP>
         <FILE id="ZVYJPe" name="CanvasBorder.h" compile="0" resource="0" file="Source/CanvasBorder.h"/>
         <GROUP id="{02097C48-1046-B954-B140-F8C283AC348A}" name="DragBar">
           <FILE id="h92mvE" name="DestinationBar.cpp" compile="1" resource="0"

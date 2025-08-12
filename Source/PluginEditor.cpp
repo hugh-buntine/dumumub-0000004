@@ -16,19 +16,18 @@ Dumumub0000004AudioProcessorEditor::Dumumub0000004AudioProcessorEditor (Dumumub0
       freqDisplay (p),
       selectionBar(destinationBar)
 {
-    Logger::writeToLog("===============================================================");
-    Logger::writeToLog("EDITOR CONSTRUCTOR");
     setSize (1100, 700);
-    Logger::writeToLog("set size to 1100, 700");
+
+    // BACKGROUND
+    background = ImageCache::getFromMemory(BinaryData::BACKGROUND_png, BinaryData::BACKGROUND_pngSize);
 
     // FREQ DISPLAY
     freqDisplay.setBounds(38, 162, 1024, 500);
     addAndMakeVisible(freqDisplay);
-    Logger::writeToLog("added freqDisplay to editor");
 
-    titleImageUnpressed = ImageCache::getFromMemory(BinaryData::TITLE_4_png, BinaryData::TITLE_4_pngSize);
-    titleImagePressed = ImageCache::getFromMemory(BinaryData::TITLE_4_PRESS_png, BinaryData::TITLE_4_PRESS_pngSize);
-    titleImageHover = ImageCache::getFromMemory(BinaryData::TITLE_4_HOVER_png, BinaryData::TITLE_4_HOVER_pngSize);
+    titleImageUnpressed = ImageCache::getFromMemory(BinaryData::TITLE_png, BinaryData::TITLE_pngSize);
+    titleImagePressed = ImageCache::getFromMemory(BinaryData::TITLE_PRESS_png, BinaryData::TITLE_PRESS_pngSize);
+    titleImageHover = ImageCache::getFromMemory(BinaryData::TITLE_HOVER_png, BinaryData::TITLE_HOVER_pngSize);
     titleButton.setImages(false, true, false, titleImageUnpressed, 1.0f, Colours::transparentBlack, titleImageHover, 1.0f, Colours::transparentBlack, titleImagePressed, 1.0f, Colours::transparentBlack);
 
     undoImageUnpressed = ImageCache::getFromMemory(BinaryData::UNDO_png, BinaryData::UNDO_pngSize);
@@ -45,62 +44,50 @@ Dumumub0000004AudioProcessorEditor::Dumumub0000004AudioProcessorEditor (Dumumub0
     moveButton.setBounds(620, 10, 200, 80);
     addAndMakeVisible(moveButton);
     moveButton.addListener(this);
-    Logger::writeToLog("added move button");
 
     // UNDO BUTTON
     undoButton.setBounds(860, 10, 200, 80);
     addAndMakeVisible(undoButton);
     undoButton.addListener(this);
-    Logger::writeToLog("added undo button");
 
     // TITLE BUTTON
-    titleButton.setBounds(40, 10, 540, 80);
+    titleButton.setBounds(80, 10, 500, 80);
     addAndMakeVisible(titleButton);
     titleButton.addListener(this);
-    Logger::writeToLog("added title button");
 
     // BORDER IMAGE
     borderImage.setBounds(0, 124, 1100, 576);
     addAndMakeVisible(borderImage);
     borderImage.toFront(true);
-    Logger::writeToLog("added border image");
 
     // DESTINATION BAR
     destinationBar.setBounds(762, 120, 100, 20);
     destinationBar.toFront(true);
     addAndMakeVisible(destinationBar);
-    Logger::writeToLog("added destination bar");
 
     // SELECTION BAR
     selectionBar.setBounds(238, 100, 100, 20);
     selectionBar.toFront(true);
     addAndMakeVisible(selectionBar);
-    Logger::writeToLog("added selection bar");
+
+    // HELP 
+    help.setBounds(0, 0, 1100, 700);
+    addAndMakeVisible(help);
 
     // SET THE PROCESSOR
     updateProcessorOfBars();
-    Logger::writeToLog("set processor of bars");
-    
-
-    
-
-
-
-    Logger::writeToLog("===============================================================");
-   
 }
 
 Dumumub0000004AudioProcessorEditor::~Dumumub0000004AudioProcessorEditor()
 {
-    Logger::writeToLog("===============================================================");
-    Logger::writeToLog("EDITOR DESTRUCTOR");
-    Logger::writeToLog("===============================================================");
 }
 
 //==============================================================================
 void Dumumub0000004AudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colour::fromRGB(255, 255, 242)); // #FFFFF2
+    //g.fillAll (juce::Colour::fromRGB(255, 255, 242)); // #FFFFF2
+    g.drawImage(background, 0, 0, getWidth(), getHeight(),
+                0, 0, background.getWidth(), background.getHeight());
 
     // SELECTION BAR LINES
     g.setColour (juce::Colour::fromRGB(20, 20, 0)); // #141400
@@ -137,7 +124,7 @@ void Dumumub0000004AudioProcessorEditor::buttonClicked(juce::Button* button)
     }
     else if (button == &titleButton)
     {
-        Logger::writeToLog("Title button clicked");
+        help.setHelpVisible();
     }
 }
 

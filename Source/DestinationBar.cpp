@@ -15,8 +15,6 @@
 //==============================================================================
 DestinationBar::DestinationBar()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
     updateProcessorOfBars();
 }
 
@@ -26,15 +24,12 @@ DestinationBar::~DestinationBar()
 
 void DestinationBar::paint (juce::Graphics& g)
 {
-    g.setColour(juce::Colour::fromRGBA(20, 20, 0, 140)); // #141400
-    //g.drawLine(0, 0, getWidth(), 0, 2.0f); // top line
-    //g.drawLine(0, 0, 0, getHeight(), 2.0f); // left line
-    //g.drawLine(getWidth(), 0, getWidth(), getHeight(), 2.0f); // right line
+    g.setColour(juce::Colour::fromRGBA(20, 20, 0, 255)); // #141400
 
     // Load the Duru Sans font
     static juce::Font duruSansFont = juce::Font(juce::Typeface::createSystemTypefaceFor(
         BinaryData::DuruSansRegular_ttf, BinaryData::DuruSansRegular_ttfSize));
-    g.setFont(duruSansFont.withHeight(14.0f)); // Set the font with the desired size
+    g.setFont(duruSansFont.withHeight(14.0f));
 
     // Text to draw
     juce::String text = "to here";

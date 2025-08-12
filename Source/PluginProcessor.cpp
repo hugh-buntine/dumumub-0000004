@@ -22,24 +22,12 @@ Dumumub0000004AudioProcessor::Dumumub0000004AudioProcessor()
                        
 #endif
 {
-    Logger::writeToLog("===============================================================");
-    Logger::writeToLog("PROCESSOR CONSTRUCTOR");
-    Logger::writeToLog("fft size: " + String(fftProcessor.getFFTSize()));
-
     initialiseBinMap();
-    Logger::writeToLog("Initialised bin map with size: " + String(fftProcessor.getBinMap().size()));
-
     addBinMapToStack();
-
-    Logger::writeToLog("===============================================================");
-    
 }
 
 Dumumub0000004AudioProcessor::~Dumumub0000004AudioProcessor()
 {
-    Logger::writeToLog("===============================================================");
-    Logger::writeToLog("PROCESSOR DESTRUCTOR");
-    Logger::writeToLog("===============================================================");
 }
 
 //==============================================================================
@@ -107,14 +95,7 @@ void Dumumub0000004AudioProcessor::changeProgramName (int index, const juce::Str
 //==============================================================================
 void Dumumub0000004AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    Logger::writeToLog("===============================================================");
-    Logger::writeToLog("prepareToPlay()");
     fftProcessor.prepare (sampleRate, samplesPerBlock, 2, 2);
-    Logger::writeToLog("Prepared FFT Processor with sample rate: " + String(sampleRate) + " and samples per block: " + String(samplesPerBlock));
-
-    
-
-    Logger::writeToLog("===============================================================");
 }
 
 void Dumumub0000004AudioProcessor::releaseResources()
@@ -323,15 +304,11 @@ void Dumumub0000004AudioProcessor::editBinMap()
 void Dumumub0000004AudioProcessor::addBinMapToStack()
 {
     auto binMap = fftProcessor.getBinMap();
-    Logger::writeToLog("Bin map size: " + String(binMap.size()));
     if (binMap.empty())
     {
-        Logger::writeToLog("Bin map is empty. Skipping addition to stack.");
         return;
     }
-
     fftProcessor.getBinMapStack().push_back(binMap);
-    Logger::writeToLog("Added bin map to stack with size: " + String(fftProcessor.getBinMapStack().size()));
 }
 
 void Dumumub0000004AudioProcessor::undoBinMap()
@@ -340,11 +317,6 @@ void Dumumub0000004AudioProcessor::undoBinMap()
     {
         fftProcessor.getBinMapStack().pop_back();
         fftProcessor.setBinMap(fftProcessor.getBinMapStack().back());
-        Logger::writeToLog("Undid bin map with size: " + String(fftProcessor.getBinMapStack().size()));
-    }
-    else
-    {
-        Logger::writeToLog("Cannot undo bin map, only one in stack");
     }
 }
 

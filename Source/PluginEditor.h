@@ -14,6 +14,7 @@
 #include "SelectionBar.h"
 #include "DestinationBar.h"
 #include "CanvasBorder.h"
+#include "Help.h"
 
 //==============================================================================
 /**
@@ -55,6 +56,9 @@ private:
     Image moveImageUnpressed;
     Image moveImagePressed;
     Image moveImageHover;
+    Image background;
+
+    Help help;
 
 
     SelectionBar selectionBar;
