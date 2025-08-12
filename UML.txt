@@ -1,137 +1,243 @@
 @startuml
 !theme vibrant
 /'==========================================================================='/
-class Dumumub0000004AudioProcessor {
-- binMap : int[1024]
-- binMags : float[1024]
-- fftProcessor : MyProcessor
-- currentVolume : float[2]
+title Dumumub-0000004 Audio Plugin Architecture
+/'==========================================================================='/
 
-+ prepareToPlay(sampleRate: double, samplesPerBlock: int) : void
-+ processBlock(buffer: AudioBuffer<float>, midiMessages: MidiBuffer) : void
-+ getBinMap() : int[1024]
-+ editBinMap(selectedIndexs: int[2], newStart: int) : void
-+ processFrameInBuffer (maxNumChannels: int): void OVERRIDE
-+ setBinMags() : void
-+ getBinMags() : float[1024]
-+ resetBinMap() : void
-+ getCurrentVolume() : float[2]
-+ setCurrentVolume(float L, float R) : void
-}
-/'==========================================================================='/
-/'==========================================================================='/
-class Dumumub0000004AudioProcessorEditor {
-- audioProcessor: Dumumub0000004AudioProcessor
-- freqDisplay : FreqDisplay
-- gainSlider : Slider
-- hedingButton : Button
-- helpDisplay : Image
-- resetButton : Button
-
-+ paint(g: Graphics) : void
-+ resized() : void
-}
-/'==========================================================================='/
-/'==========================================================================='/
-class FreqDisplay {
-- audioProcessor: Dumumub0000004AudioProcessor
-- bars : FreqBar[1024]
-
-+ paint(g: Graphics) : void
-+ setFreqBarsHeights() : void
-}
-/'==========================================================================='/
-/'==========================================================================='/
-class FreqBar {
-- height : float
-- homeIndex : int
-- colour : Colour
-
-+ paint(g: Graphics) : void
-+ calculateColour() : void
-+ setHeight(newHeight: int) void
-}
-/'==========================================================================='/
-/'==========================================================================='/
-class EditTool {
-- audioProcessor: Dumumub0000004AudioProcessor
-- dragBar : DragBar
-- selctionBar : SelectionBar
-- selectedIndexs : int[2]
-
-+ paint(g: Graphics) : void
-}
-/'==========================================================================='/
-/'==========================================================================='/
-class DragBar {
-- xPos : int
-
-+ paint(g: Graphics) : void
-+ getParent() : EditTool
-+ tellToolOfMovement() : void
-}
-/'==========================================================================='/
-/'==========================================================================='/
-class SelectionBar {
-- startPos : int
-- endPos : int
-
-+ paint(g: Graphics) : void
-+ getParent() : EditTool
-+ tellToolOfStartAndEnd() : void
-}
-/'==========================================================================='/
 /'==========================================================================='/
 class OverlappingFFTProcessor {
-# fft : dsp::FFT
-# window : std::vector<float>
-# fftInOutBuffer : AudioBuffer<float>
-# fftSize : const int
-# hopSize : const int
-- nChIn : int nChIn;
-- nChOut : int nChOut;
-- notYetUsedAudioData : AudioBuffer<float>
-- outputBuffer : AudioBuffer<float>
-- outputOffset : int
-- notYetUsedAudioDataCount = 0 : int
+    # fft : dsp::FFT
+    # window : std::vector<float>
+    # fftInOutBuffer : AudioBuffer<float>
+    # fftSize : const int
+    # hopSize : const int
+    - nChIn : int
+    - nChOut : int
+    - notYetUsedAudioData : AudioBuffer<float>
+    - outputBuffer : AudioBuffer<float>
+    - outputOffset : int
+    - notYetUsedAudioDataCount : int
 
-+ processFrameInBuffer (maxNumChannels: int): void VIRTUAL
-+ prepare (const double sampleRate, const int maximumBlockSize, const int numInputChannels, const int numOutputChannels) : void
-+ process (const dsp::AudioBlock<const float>& inputBlock, dsp::AudioBlock<float>& outputBlock) : void
+    + OverlappingFFTProcessor(fftSizeAsPowerOf2: int, hopSizeDividerAsPowerOf2: int)
+    + prepare(sampleRate: double, maximumBlockSize: int, numInputChannels: int, numOutputChannels: int) : void
+    + process(inputBlock: AudioBlock<const float>, outputBlock: AudioBlock<float>) : void
+    + processFrameInBuffer(maxNumChannels: int) : void {abstract}
+    - createWindow() : void
+    - writeBackFrame() : void
 }
-/'==========================================================================='/
+
 /'==========================================================================='/
 class MyProcessor {
-- binMags : float[1024]
+    - binMags : std::array<float, 1024>
+    - binMap : std::vector<int>
+    - binMapStack : std::vector<std::vector<int>>
 
-+ processFrameInBuffer (maxNumChannels: int): void OVERRIDE
-+ getBinMags (): float[1024]
+    + MyProcessor()
+    + processFrameInBuffer(maxNumChannels: int) : void {override}
+    + getBinMags() : std::array<float, 1024>
+    + getBinMap() : std::vector<int>
+    + setBinMap(newBinMap: std::vector<int>) : void
+    + getBinMapStack() : std::vector<std::vector<int>>&
+    + setBinMapStack(newStack: std::vector<std::vector<int>>) : void
 }
-/'==========================================================================='/
-/'==========================================================================='/
-class VolumeDisplay {
-- audioProcessor: Dumumub0000004AudioProcessor
 
-+ paint(g: Graphics) : void
+/'==========================================================================='/
+class Dumumub0000004AudioProcessor {
+    - fftProcessor : MyProcessor
+    - selectionBarLeft : int
+    - selectionBarRight : int
+    - destinationBarLeft : int
+    - destinationBarRight : int
+
+    + Dumumub0000004AudioProcessor()
+    + prepareToPlay(sampleRate: double, samplesPerBlock: int) : void
+    + processBlock(buffer: AudioBuffer<float>, midiMessages: MidiBuffer) : void
+    + createEditor() : AudioProcessorEditor*
+    + getBinMags() : std::array<float, 1024>
+    + getBinMap() : std::vector<int>
+    + editBinMap() : void
+    + undoBinMap() : void
+    + initialiseBinMap() : void
+    + addBinMapToStack() : void
+    + setSelectionBarLeft(left: int) : void
+    + setSelectionBarRight(right: int) : void
+    + setDestinationBarLeft(left: int) : void
+    + setDestinationBarRight(right: int) : void
+    + getStateInformation(destData: MemoryBlock&) : void
+    + setStateInformation(data: void*, sizeInBytes: int) : void
 }
-/'==========================================================================='/
 
 /'==========================================================================='/
-Dumumub0000004AudioProcessor "1" --> "1" MyProcessor : calls process()
+class Dumumub0000004AudioProcessorEditor {
+    - audioProcessor : Dumumub0000004AudioProcessor&
+    - freqDisplay : FreqDisplay
+    - selectionBar : SelectionBar
+    - destinationBar : DestinationBar
+    - help : Help
+    - borderImage : CanvasBorder
+    - titleButton : ImageButton
+    - undoButton : ImageButton
+    - moveButton : ImageButton
+    - background : Image
+    - titleImageUnpressed : Image
+    - titleImagePressed : Image
+    - titleImageHover : Image
+    - undoImageUnpressed : Image
+    - undoImagePressed : Image
+    - undoImageHover : Image
+    - moveImageUnpressed : Image
+    - moveImagePressed : Image
+    - moveImageHover : Image
 
-MyProcessor "1" --> "1" OverlappingFFTProcessor : inherits
+    + Dumumub0000004AudioProcessorEditor(processor: Dumumub0000004AudioProcessor&)
+    + paint(g: Graphics&) : void
+    + resized() : void
+    + buttonClicked(button: Button*) : void
+    + getSelectionBarLeftBound() : int
+    + getSelectionBarRightBound() : int
+    + updateProcessorOfBars() : void
+}
 
-Dumumub0000004AudioProcessorEditor "1" --> "1" Dumumub0000004AudioProcessor : accesses
-Dumumub0000004AudioProcessorEditor "1" --> "1" FreqDisplay : paints
-Dumumub0000004AudioProcessorEditor "1" --> "1" EditTool : paints
+/'==========================================================================='/
+class FreqDisplay {
+    - audioProcessor : Dumumub0000004AudioProcessor&
+    - freqBars : std::vector<std::unique_ptr<FreqBar>>
 
-FreqDisplay "1" --> "1" Dumumub0000004AudioProcessor : calls getBinMap(), getBinMags()
-FreqDisplay "1" --> "512" FreqBar : paints
+    + FreqDisplay(processor: Dumumub0000004AudioProcessor&)
+    + paint(g: Graphics&) : void
+    + resized() : void
+    + updateBarIndexs() : void
+    - timerCallback() : void
+}
 
-EditTool "1" --> "1" Dumumub0000004AudioProcessor : calls editBinMap()
-EditTool "1" --> "1" DragBar : paints
-EditTool "1" --> "1" SelectionBar : paints
+/'==========================================================================='/
+class FreqBar {
+    - height : int
+    - homeIndex : int
+    - currentIndex : int
+    - colour : Colour
+    - isHighlighted : bool
 
-VolumeDisplay "1" --> "1" Dumumub0000004AudioProcessor : calls getCurrentVolume()
+    + FreqBar(i: int)
+    + paint(g: Graphics&) : void
+    + resized() : void
+    + setHeight(h: int) : void
+    + setIsHighlighted(b: bool) : void
+    + calculateColour() : void
+    + setCurrentIndex(i: int) : void
+    + getCurrentIndex() : int
+}
+
+/'==========================================================================='/
+class SelectionBar {
+    - dragger : ComponentDragger
+    - constrainer : ComponentBoundsConstrainer
+    - leftEdgeComponent : ResizableEdgeComponent
+    - rightEdgeComponent : ResizableEdgeComponent
+    - destinationBar : DestinationBar&
+
+    + SelectionBar(d: DestinationBar&)
+    + paint(g: Graphics&) : void
+    + resized() : void
+    + mouseDown(event: MouseEvent&) : void
+    + mouseDrag(event: MouseEvent&) : void
+    + mouseUp(event: MouseEvent&) : void
+    + getLeftBound() : int
+    + getRightBound() : int
+    + updateProcessorOfBars() : void
+}
+
+/'==========================================================================='/
+class DestinationBar {
+    - dragger : ComponentDragger
+
+    + DestinationBar()
+    + paint(g: Graphics&) : void
+    + resized() : void
+    + mouseDown(event: MouseEvent&) : void
+    + mouseDrag(event: MouseEvent&) : void
+    + mouseUp(event: MouseEvent&) : void
+    + getLeftBound() : int
+    + getRightBound() : int
+    + updateProcessorOfBars() : void
+}
+
+/'==========================================================================='/
+class Help {
+    - helpImage : Image
+    - isOn : bool
+
+    + Help()
+    + paint(g: Graphics&) : void
+    + resized() : void
+    + setHelpVisible() : void
+}
+
+/'==========================================================================='/
+class CanvasBorder {
+    + CanvasBorder()
+    + paint(g: Graphics&) : void
+    + resized() : void
+}
+
+/'==========================================================================='/
+/' RELATIONSHIPS '/
+/'==========================================================================='/
+
+MyProcessor --|> OverlappingFFTProcessor : inherits
+
+Dumumub0000004AudioProcessor o-- MyProcessor : contains
+Dumumub0000004AudioProcessor --|> juce::AudioProcessor : inherits
+
+Dumumub0000004AudioProcessorEditor o-- Dumumub0000004AudioProcessor : references
+Dumumub0000004AudioProcessorEditor o-- FreqDisplay : contains
+Dumumub0000004AudioProcessorEditor o-- SelectionBar : contains
+Dumumub0000004AudioProcessorEditor o-- DestinationBar : contains
+Dumumub0000004AudioProcessorEditor o-- Help : contains
+Dumumub0000004AudioProcessorEditor o-- CanvasBorder : contains
+Dumumub0000004AudioProcessorEditor --|> juce::AudioProcessorEditor : inherits
+Dumumub0000004AudioProcessorEditor ..|> juce::Button::Listener : implements
+
+FreqDisplay o-- Dumumub0000004AudioProcessor : references
+FreqDisplay o-- "1024" FreqBar : contains
+FreqDisplay --|> juce::Component : inherits
+FreqDisplay ..|> juce::Timer : implements
+
+FreqBar --|> juce::Component : inherits
+
+SelectionBar o-- DestinationBar : references
+SelectionBar --|> juce::Component : inherits
+
+DestinationBar --|> juce::Component : inherits
+
+Help --|> juce::Component : inherits
+
+CanvasBorder --|> juce::Component : inherits
+
+/'==========================================================================='/
+note top of Dumumub0000004AudioProcessor
+Main audio processor handling real-time 
+frequency bin manipulation using 2048-point 
+FFT with 50% overlap for spectral analysis
+end note
+
+note top of FreqDisplay
+Real-time spectrum visualizer with 1024 
+frequency bars updating at 30Hz, showing 
+magnitude and selection highlighting
+end note
+
+note top of MyProcessor
+Custom FFT processor performing frequency 
+bin remapping based on user selection and 
+destination ranges
+end note
+
+note top of SelectionBar
+Interactive frequency range selector with 
+resizable edges and drag functionality for 
+defining source frequency range
+end note
+
 /'==========================================================================='/
 @enduml
