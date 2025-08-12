@@ -13,33 +13,41 @@
 #include <JuceHeader.h>
 
 //==============================================================================
-/*
-*/
-class CanvasBorder  : public juce::Component
+/**
+ * Decorative border component for the frequency display canvas.
+ * 
+ * Simple image component that draws a border around the frequency spectrum
+ * visualization area. Provides visual frame for the interactive elements.
+ */
+class CanvasBorder : public juce::Component
 {
 public:
+    /** Constructor - loads border image from binary data */
     CanvasBorder()
     {
-        borderImage = ImageCache::getFromMemory(BinaryData::CANVAS_BORDER_png, BinaryData::CANVAS_BORDER_pngSize);
+        borderImage = ImageCache::getFromMemory(BinaryData::CANVAS_BORDER_png, 
+                                              BinaryData::CANVAS_BORDER_pngSize);
     }
 
+    /** Destructor */
     ~CanvasBorder() override
     {
     }
 
-    void paint (juce::Graphics& g) override
+    /** Draws the border image scaled to component bounds */
+    void paint(juce::Graphics& g) override
     {
         g.drawImage(borderImage, 0, 0, getWidth(), getHeight(),
                     0, 0, borderImage.getWidth(), borderImage.getHeight());
-
-
     }
 
+    /** Resize handler - no action needed */
     void resized() override
     {
     }
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CanvasBorder)
-    Image borderImage;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CanvasBorder)
+    
+    Image borderImage;  ///< Border graphic image
 };

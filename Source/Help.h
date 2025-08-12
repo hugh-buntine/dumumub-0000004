@@ -13,22 +13,32 @@
 #include <JuceHeader.h>
 
 //==============================================================================
-/*
-*/
-class Help  : public juce::Component
+/**
+ * Overlay help component for displaying user instructions.
+ * 
+ * Shows/hides help image overlay when toggled. Positioned always on top
+ * and click-through to allow interaction with underlying components while
+ * help is displayed.
+ */
+class Help : public juce::Component
 {
 public:
+    /** Constructor - loads help image and configures overlay behavior */
     Help();
+    
+    /** Destructor */
     ~Help() override;
 
-    void paint (juce::Graphics&) override;
+    // Component overrides
+    void paint(juce::Graphics&) override;
     void resized() override;
 
+    /** Toggles help visibility state */
     void setHelpVisible() { isOn = !isOn; repaint(); }
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Help)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Help)
 
-    Image helpImage;
-    bool isOn;
+    Image helpImage;  ///< Help overlay image
+    bool isOn;        ///< Visibility state flag
 };

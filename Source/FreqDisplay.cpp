@@ -16,14 +16,17 @@
 //==============================================================================
 FreqDisplay::FreqDisplay(Dumumub0000004AudioProcessor& p) : audioProcessor(p)
 {
-    freqBars.reserve(1024); // Reserve space for 1024 elements in the vector
+    // Initialize frequency bars for 1024-bin FFT display
+    freqBars.reserve(1024); 
     for (int i = 0; i < 1024; ++i) {
-        auto freqBar = std::make_unique<FreqBar>(i); // Create a unique pointer to a FreqBar object
-        freqBar->setBounds(0, 0, 1024, 500); // Set the bounds of the FreqBar object
-        freqBar->setCurrentIndex(audioProcessor.getBinMap()[i]); // Set the current index of the FreqBar object
-        addAndMakeVisible(*freqBar); // Add the FreqBar object to the display
-        freqBars.push_back(std::move(freqBar)); // Move the unique pointer into the vector
+        auto freqBar = std::make_unique<FreqBar>(i);
+        freqBar->setBounds(0, 0, 1024, 500);
+        freqBar->setCurrentIndex(audioProcessor.getBinMap()[i]);
+        addAndMakeVisible(*freqBar);
+        freqBars.push_back(std::move(freqBar));
     }
+    
+    // Start 30 Hz refresh timer for real-time spectrum visualization
     startTimerHz(30); 
 }
 
@@ -32,27 +35,29 @@ FreqDisplay::~FreqDisplay()
     stopTimer();
 }
 
-void FreqDisplay::paint (juce::Graphics& g)
+void FreqDisplay::paint(juce::Graphics& g)
 {
-    // Set the color to black and draw an outline around the component
-    g.setColour (juce::Colours::black);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    // Draw component border for visual feedback
+    g.setColour(juce::Colours::black);
+    g.drawRect(getLocalBounds(), 1);
 }
 
 void FreqDisplay::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    // No child component resizing needed - FreqBars manage their own positioning
 }
-
 
 void FreqDisplay::timerCallback() 
 {
-    auto binMags = audioProcessor.getBinMags(); // Get the magnitudes of the frequency bins
+    // Update spectrum display with current magnitude data
+    auto binMags = audioProcessor.getBinMags();
+    
     for (int i = 0; i < 1024; ++i) {
-        float height = binMags[i]; // Get the magnitude of the ith frequency bin
-        if (height > 100){ // visual compression
+        float height = binMags[i];
+        
+        // Apply progressive visual compression for better display scaling
+        // Reduces extreme peaks while maintaining detail in lower amplitudes
+        if (height > 100) {
             height = 100 + ((height - 100) / 1.5); 
             if (height > 200) {
                 height = 200 + ((height - 200) / 2);
@@ -61,35 +66,34 @@ void FreqDisplay::timerCallback()
                     if (height > 400) {
                         height = 400 + ((height - 400) / 5);
                         if (height > 500) {
-                            height = 500;
+                            height = 500; // Maximum display height
                         }
                     }
                 }
-            };
+            }
         }
 
-        // set the highlighted bars
+        // Update highlight state based on current selection range
         auto* parentEditor = findParentComponentOfClass<Dumumub0000004AudioProcessorEditor>();
         if (parentEditor != nullptr)
         {
-            if (freqBars[i]->getCurrentIndex() >= parentEditor->getSelectionBarLeftBound() && freqBars[i]->getCurrentIndex() <= parentEditor->getSelectionBarRightBound())
-            {
-                freqBars[i]->setIsHighlighted(true);
-            }
-            else
-            {
-                freqBars[i]->setIsHighlighted(false);
-            }
+            bool isInSelection = (freqBars[i]->getCurrentIndex() >= parentEditor->getSelectionBarLeftBound() && 
+                                 freqBars[i]->getCurrentIndex() <= parentEditor->getSelectionBarRightBound());
+            freqBars[i]->setIsHighlighted(isInSelection);
         }
 
-        freqBars[i]->setHeight(height); // Set the height of the FreqBar object
+        freqBars[i]->setHeight(height);
     }
-    repaint(); // Repaint the display
+    
+    // Trigger visual update
+    repaint();
 }
 
 void FreqDisplay::updateBarIndexs()
 {
-  std::vector<int> binMap = audioProcessor.getBinMap();
+    // Synchronize frequency bar positions with current bin mapping
+    // Called when processor bin map changes due to user interactions
+    std::vector<int> binMap = audioProcessor.getBinMap();
     for (int i = 0; i < 1024; ++i) {
         freqBars[i]->setCurrentIndex(binMap[i]);
     }

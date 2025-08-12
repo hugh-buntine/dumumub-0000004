@@ -18,54 +18,68 @@
 
 //==============================================================================
 /**
-*/
-class Dumumub0000004AudioProcessorEditor  : public juce::AudioProcessorEditor,
-                                            public juce::Button::Listener
+ * Main plugin editor interface for frequency manipulation.
+ * 
+ * Provides graphical interface for real-time frequency spectrum visualization
+ * and interactive frequency bin remapping. Includes selection tools, control
+ * buttons, and help overlay system.
+ */
+class Dumumub0000004AudioProcessorEditor : public juce::AudioProcessorEditor,
+                                          public juce::Button::Listener
 {
 public:
-    Dumumub0000004AudioProcessorEditor (Dumumub0000004AudioProcessor&);
+    /** Constructor - initializes all UI components and layout */
+    Dumumub0000004AudioProcessorEditor(Dumumub0000004AudioProcessor&);
+    
+    /** Destructor */
     ~Dumumub0000004AudioProcessorEditor() override;
 
     //==============================================================================
-    void paint (juce::Graphics&) override;
+    // Component interface
+    void paint(juce::Graphics&) override;
     void resized() override;
 
+    /** Handles button click events for move, undo, and title buttons */
     void buttonClicked(Button* button) override;
+    
+    /** @returns Selection bar left boundary for processor coordination */
     int getSelectionBarLeftBound() { return selectionBar.getLeftBound(); }
+    
+    /** @returns Selection bar right boundary for processor coordination */
     int getSelectionBarRightBound() { return selectionBar.getRightBound(); }
 
+    /** Updates audio processor with current bar positions */
     void updateProcessorOfBars();
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    Dumumub0000004AudioProcessor& audioProcessor;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Dumumub0000004AudioProcessorEditor)
+    
+    // Core references
+    Dumumub0000004AudioProcessor& audioProcessor;  ///< Reference to audio processor
 
-    FreqDisplay freqDisplay;
+    // Main display components
+    FreqDisplay freqDisplay;        ///< Real-time frequency spectrum display
+    
+    // Control buttons with multiple image states
+    ImageButton moveButton;         ///< Move/apply frequency remapping button
+    ImageButton undoButton;         ///< Undo last operation button  
+    ImageButton titleButton;        ///< Title/help toggle button
 
-    ImageButton moveButton;
-    ImageButton undoButton;
-    ImageButton titleButton;
+    // Button image assets (normal, pressed, hover states)
+    Image titleImageUnpressed;      ///< Title button normal state
+    Image titleImagePressed;        ///< Title button pressed state
+    Image titleImageHover;          ///< Title button hover state
+    Image undoImageUnpressed;       ///< Undo button normal state
+    Image undoImagePressed;         ///< Undo button pressed state
+    Image undoImageHover;           ///< Undo button hover state
+    Image moveImageUnpressed;       ///< Move button normal state
+    Image moveImagePressed;         ///< Move button pressed state
+    Image moveImageHover;           ///< Move button hover state
+    Image background;               ///< Background image
 
-    Image titleImageUnpressed;
-    Image titleImagePressed;
-    Image titleImageHover;
-    Image undoImageUnpressed;
-    Image undoImagePressed;
-    Image undoImageHover;
-    Image moveImageUnpressed;
-    Image moveImagePressed;
-    Image moveImageHover;
-    Image background;
-
-    Help help;
-
-
-    SelectionBar selectionBar;
-    DestinationBar destinationBar;
-
-    CanvasBorder borderImage;
-
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dumumub0000004AudioProcessorEditor)
+    // Overlay and interaction components
+    Help help;                      ///< Help overlay system
+    SelectionBar selectionBar;      ///< Frequency range selection tool
+    DestinationBar destinationBar;  ///< Frequency remapping destination tool
+    CanvasBorder borderImage;       ///< Decorative border frame
 };

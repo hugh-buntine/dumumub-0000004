@@ -22,7 +22,9 @@ Dumumub0000004AudioProcessor::Dumumub0000004AudioProcessor()
                        
 #endif
 {
+    // Initialize frequency bin mapping to default linear mapping (0→0, 1→1, etc.)
     initialiseBinMap();
+    // Save initial state to undo stack
     addBinMapToStack();
 }
 
@@ -79,47 +81,44 @@ int Dumumub0000004AudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void Dumumub0000004AudioProcessor::setCurrentProgram (int index)
+void Dumumub0000004AudioProcessor::setCurrentProgram(int index)
 {
 }
 
-const juce::String Dumumub0000004AudioProcessor::getProgramName (int index)
+const juce::String Dumumub0000004AudioProcessor::getProgramName(int index)
 {
     return {};
 }
 
-void Dumumub0000004AudioProcessor::changeProgramName (int index, const juce::String& newName)
+void Dumumub0000004AudioProcessor::changeProgramName(int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void Dumumub0000004AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void Dumumub0000004AudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-    fftProcessor.prepare (sampleRate, samplesPerBlock, 2, 2);
+    // Initialize FFT processor with 2048-point FFT, stereo input/output
+    fftProcessor.prepare(sampleRate, samplesPerBlock, 2, 2);
 }
 
 void Dumumub0000004AudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+    // Release any allocated resources when playback stops
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool Dumumub0000004AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool Dumumub0000004AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
+    juce::ignoreUnused(layouts);
     return true;
   #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
+    // Support mono or stereo configurations only
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
+    // Ensure input and output channel counts match
    #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
@@ -130,35 +129,35 @@ bool Dumumub0000004AudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 }
 #endif
 
-
-void Dumumub0000004AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void Dumumub0000004AudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    // Prevent denormal floating point numbers for performance
     ScopedNoDenormals noDenormals;
 
-    dsp::AudioBlock<float> ab (buffer);
-    dsp::ProcessContextReplacing<float> context (ab);
-    fftProcessor.process (context);
+    // Process audio through overlapping FFT with frequency bin remapping
+    dsp::AudioBlock<float> ab(buffer);
+    dsp::ProcessContextReplacing<float> context(ab);
+    fftProcessor.process(context);
 }
-
 
 //==============================================================================
 bool Dumumub0000004AudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true; // Plugin provides a graphical user interface
 }
 
 juce::AudioProcessorEditor* Dumumub0000004AudioProcessor::createEditor()
 {
-    return new Dumumub0000004AudioProcessorEditor (*this);
+    return new Dumumub0000004AudioProcessorEditor(*this);
 }
 
 //==============================================================================
 void Dumumub0000004AudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
-    // Create a ValueTree to store the plugin state
+    // Serialize plugin state including bin mappings and undo history
     juce::ValueTree state("PluginState");
 
-    // Save the current binMap
+    // Save current frequency bin mapping
     juce::ValueTree binMapTree("BinMap");
     auto binMap = fftProcessor.getBinMap();
     for (size_t i = 0; i < binMap.size(); ++i)
@@ -167,7 +166,7 @@ void Dumumub0000004AudioProcessor::getStateInformation(juce::MemoryBlock& destDa
     }
     state.addChild(binMapTree, -1, nullptr);
 
-    // Save the binMapStack
+    // Save undo history stack
     juce::ValueTree binMapStackTree("BinMapStack");
     auto binMapStack = fftProcessor.getBinMapStack();
     for (size_t i = 0; i < binMapStack.size(); ++i)
@@ -181,22 +180,21 @@ void Dumumub0000004AudioProcessor::getStateInformation(juce::MemoryBlock& destDa
     }
     state.addChild(binMapStackTree, -1, nullptr);
 
-    // Convert the ValueTree to XML and write it to the MemoryBlock
+    // Convert to binary format for host storage
     std::unique_ptr<juce::XmlElement> xml = state.createXml();
     copyXmlToBinary(*xml, destData);
 }
 
 void Dumumub0000004AudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-    // Convert the binary data back to an XML element
+    // Deserialize plugin state from host-provided binary data
     std::unique_ptr<juce::XmlElement> xmlState = getXmlFromBinary(data, sizeInBytes);
 
     if (xmlState != nullptr && xmlState->hasTagName("PluginState"))
     {
-        // Restore the state from the XML
         juce::ValueTree state = juce::ValueTree::fromXml(*xmlState);
 
-        // Restore the binMap
+        // Restore frequency bin mapping
         juce::ValueTree binMapTree = state.getChildWithName("BinMap");
         if (binMapTree.isValid())
         {
@@ -208,7 +206,7 @@ void Dumumub0000004AudioProcessor::setStateInformation(const void* data, int siz
             fftProcessor.setBinMap(binMap);
         }
 
-        // Restore the binMapStack
+        // Restore undo history
         juce::ValueTree binMapStackTree = state.getChildWithName("BinMapStack");
         if (binMapStackTree.isValid())
         {
@@ -235,9 +233,9 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new Dumumub0000004AudioProcessor();
 }
 
-
 void Dumumub0000004AudioProcessor::initialiseBinMap()
 {
+    // Create default linear frequency bin mapping (identity mapping)
     std::vector<int> binMap;
     binMap.reserve(1024);
     for (int i = 0; i < 1024; ++i) {
@@ -248,42 +246,46 @@ void Dumumub0000004AudioProcessor::initialiseBinMap()
 
 void Dumumub0000004AudioProcessor::editBinMap()
 {
-    int ss = selectionBarLeft;
-    int se = selectionBarRight;
-    int ds = destinationBarLeft;
-    int de = destinationBarRight;
+    // Apply frequency bin remapping based on selection and destination ranges
+    int ss = selectionBarLeft;   // Source start index
+    int se = selectionBarRight;  // Source end index
+    int ds = destinationBarLeft; // Destination start index
+    int de = destinationBarRight; // Destination end index
     int blockSize = se - ss;
     bool movedRight = ds > ss;
 
     std::vector<int> binMap = fftProcessor.getBinMap();
     std::vector<int> newBinMap(binMap.size(), -1);
 
-    if (ds == ss) // No change
+    if (ds == ss) // No change needed
     {
         fftProcessor.setBinMap(newBinMap);
     }
     else
     {
-        // SET THE BLOCK
+        // Map selected frequency range to destination range
         for (int i = ss; i < se; ++i)
         {
             int index = find(binMap.begin(), binMap.end(), i) - binMap.begin();
             newBinMap[index] = ds + (i - ss);
         }
 
-        // SET THE REST
+        // Remap remaining frequencies to accommodate the moved block
         for (int i = 0; i < binMap.size(); ++i)
         {
             int value = binMap[i];
-            if (((value < ss || value >= de) && movedRight) || ((value < ds || value >= se) && !movedRight)) // if outside of action, dont move
+            
+            // Check if frequency bin is outside the affected range
+            if (((value < ss || value >= de) && movedRight) || 
+                ((value < ds || value >= se) && !movedRight))
             {
-                newBinMap[i] = value;
+                newBinMap[i] = value; // No change needed
             }
-            else if (value >= ss && value < se) // in the block
+            else if (value >= ss && value < se) // Part of moved block
             {
-                continue;
+                continue; // Already handled above
             }
-            else // outside the block
+            else // Needs to shift to make room for moved block
             {
                 if (movedRight)
                 {
@@ -303,6 +305,7 @@ void Dumumub0000004AudioProcessor::editBinMap()
 
 void Dumumub0000004AudioProcessor::addBinMapToStack()
 {
+    // Add current bin mapping to undo history
     auto binMap = fftProcessor.getBinMap();
     if (binMap.empty())
     {
@@ -313,6 +316,7 @@ void Dumumub0000004AudioProcessor::addBinMapToStack()
 
 void Dumumub0000004AudioProcessor::undoBinMap()
 {
+    // Revert to previous bin mapping state if available
     if (fftProcessor.getBinMapStack().size() > 1)
     {
         fftProcessor.getBinMapStack().pop_back();

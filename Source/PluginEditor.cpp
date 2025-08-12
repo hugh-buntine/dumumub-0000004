@@ -10,71 +10,78 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-Dumumub0000004AudioProcessorEditor::Dumumub0000004AudioProcessorEditor (Dumumub0000004AudioProcessor& p)
-    : AudioProcessorEditor (&p), 
-      audioProcessor (p),
-      freqDisplay (p),
+Dumumub0000004AudioProcessorEditor::Dumumub0000004AudioProcessorEditor(Dumumub0000004AudioProcessor& p)
+    : AudioProcessorEditor(&p), 
+      audioProcessor(p),
+      freqDisplay(p),
       selectionBar(destinationBar)
 {
-    setSize (1100, 700);
+    // Set plugin window dimensions
+    setSize(1100, 700);
 
-    // BACKGROUND
+    // Load background image from binary resources
     background = ImageCache::getFromMemory(BinaryData::BACKGROUND_png, BinaryData::BACKGROUND_pngSize);
 
-    // FREQ DISPLAY
+    // Initialize main frequency spectrum display component
     freqDisplay.setBounds(38, 162, 1024, 500);
     addAndMakeVisible(freqDisplay);
 
+    // Configure title button with state-based images
     titleImageUnpressed = ImageCache::getFromMemory(BinaryData::TITLE_png, BinaryData::TITLE_pngSize);
     titleImagePressed = ImageCache::getFromMemory(BinaryData::TITLE_PRESS_png, BinaryData::TITLE_PRESS_pngSize);
     titleImageHover = ImageCache::getFromMemory(BinaryData::TITLE_HOVER_png, BinaryData::TITLE_HOVER_pngSize);
-    titleButton.setImages(false, true, false, titleImageUnpressed, 1.0f, Colours::transparentBlack, titleImageHover, 1.0f, Colours::transparentBlack, titleImagePressed, 1.0f, Colours::transparentBlack);
+    titleButton.setImages(false, true, false, titleImageUnpressed, 1.0f, Colours::transparentBlack, 
+                         titleImageHover, 1.0f, Colours::transparentBlack, titleImagePressed, 1.0f, Colours::transparentBlack);
 
+    // Configure undo button with state-based images
     undoImageUnpressed = ImageCache::getFromMemory(BinaryData::UNDO_png, BinaryData::UNDO_pngSize);
     undoImagePressed = ImageCache::getFromMemory(BinaryData::UNDO_PRESS_png, BinaryData::UNDO_PRESS_pngSize);
     undoImageHover = ImageCache::getFromMemory(BinaryData::UNDO_HOVER_png, BinaryData::UNDO_HOVER_pngSize);
-    undoButton.setImages(false, true, false, undoImageUnpressed, 1.0f, Colours::transparentBlack, undoImageHover, 1.0f, Colours::transparentBlack, undoImagePressed, 1.0f, Colours::transparentBlack);
+    undoButton.setImages(false, true, false, undoImageUnpressed, 1.0f, Colours::transparentBlack, 
+                        undoImageHover, 1.0f, Colours::transparentBlack, undoImagePressed, 1.0f, Colours::transparentBlack);
 
+    // Configure move button with state-based images
     moveImageUnpressed = ImageCache::getFromMemory(BinaryData::MOVE_png, BinaryData::MOVE_pngSize);
     moveImagePressed = ImageCache::getFromMemory(BinaryData::MOVE_PRESS_png, BinaryData::MOVE_PRESS_pngSize);
     moveImageHover = ImageCache::getFromMemory(BinaryData::MOVE_HOVER_png, BinaryData::MOVE_HOVER_pngSize);
-    moveButton.setImages(false, true, false, moveImageUnpressed, 1.0f, Colours::transparentBlack, moveImageHover, 1.0f, Colours::transparentBlack, moveImagePressed, 1.0f, Colours::transparentBlack);
+    moveButton.setImages(false, true, false, moveImageUnpressed, 1.0f, Colours::transparentBlack, 
+                        moveImageHover, 1.0f, Colours::transparentBlack, moveImagePressed, 1.0f, Colours::transparentBlack);
 
-    // MOVE BUTTON
+    // Position and configure move button (applies frequency bin remapping)
     moveButton.setBounds(620, 10, 200, 80);
     addAndMakeVisible(moveButton);
     moveButton.addListener(this);
 
-    // UNDO BUTTON
+    // Position and configure undo button (reverts last mapping change)
     undoButton.setBounds(860, 10, 200, 80);
     addAndMakeVisible(undoButton);
     undoButton.addListener(this);
 
-    // TITLE BUTTON
+    // Position and configure title button (shows/hides help overlay)
     titleButton.setBounds(80, 10, 500, 80);
     addAndMakeVisible(titleButton);
     titleButton.addListener(this);
 
-    // BORDER IMAGE
+    // Add spectrum display border component
     borderImage.setBounds(0, 124, 1100, 576);
     addAndMakeVisible(borderImage);
     borderImage.toFront(true);
 
-    // DESTINATION BAR
+    // Initialize destination frequency range selector
     destinationBar.setBounds(762, 120, 100, 20);
     destinationBar.toFront(true);
     addAndMakeVisible(destinationBar);
 
-    // SELECTION BAR
+    // Initialize source frequency range selector
     selectionBar.setBounds(238, 100, 100, 20);
     selectionBar.toFront(true);
     addAndMakeVisible(selectionBar);
 
-    // HELP 
+    // Add help overlay component (always on top, click-through enabled)
     help.setBounds(0, 0, 1100, 700);
     addAndMakeVisible(help);
 
-    // SET THE PROCESSOR
+    // Synchronize selection bar positions with audio processor
     updateProcessorOfBars();
 }
 
@@ -83,58 +90,57 @@ Dumumub0000004AudioProcessorEditor::~Dumumub0000004AudioProcessorEditor()
 }
 
 //==============================================================================
-void Dumumub0000004AudioProcessorEditor::paint (juce::Graphics& g)
+void Dumumub0000004AudioProcessorEditor::paint(juce::Graphics& g)
 {
-    //g.fillAll (juce::Colour::fromRGB(255, 255, 242)); // #FFFFF2
+    // Draw main background image
     g.drawImage(background, 0, 0, getWidth(), getHeight(),
                 0, 0, background.getWidth(), background.getHeight());
 
-    // SELECTION BAR LINES
-    g.setColour (juce::Colour::fromRGB(20, 20, 0)); // #141400
-    g.drawLine(selectionBar.getLeftBound() + 38 + 1, 162, selectionBar.getLeftBound() + 38 + 1, 662, 1); // + 38 to account for the offset. + 1 to make it not stick to the side
-    g.drawLine(selectionBar.getRightBound() + 38, 162, selectionBar.getRightBound() + 38, 662, 1); // + 38 to account for the offset.
+    // Draw solid lines for source frequency selection range
+    g.setColour(juce::Colour::fromRGB(20, 20, 0)); // Dark green-brown
+    g.drawLine(selectionBar.getLeftBound() + 38 + 1, 162, selectionBar.getLeftBound() + 38 + 1, 662, 1);
+    g.drawLine(selectionBar.getRightBound() + 38, 162, selectionBar.getRightBound() + 38, 662, 1);
 
-    // DESTINATION BAR LINES
+    // Draw dashed lines for destination frequency range
     Line<float> line1 = Line<float>(destinationBar.getLeftBound() + 38 + 1, 162, destinationBar.getLeftBound() + 38 + 1, 662);
     Line<float> line2 = Line<float>(destinationBar.getRightBound() + 38, 162, destinationBar.getRightBound() + 38, 662);
     const float dashArray[] = { 5.0f, 5.0f };
     g.drawDashedLine(line1, dashArray, 2, 1.0f, 0);
     g.drawDashedLine(line2, dashArray, 2, 1.0f, 0);
-    
-
 }
 
 void Dumumub0000004AudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    // No dynamic component resizing needed - all components use fixed positioning
 }
 
 void Dumumub0000004AudioProcessorEditor::buttonClicked(juce::Button* button)
 {
     if (button == &moveButton)
     {
+        // Apply frequency bin remapping based on current selection and destination ranges
         audioProcessor.editBinMap();
         freqDisplay.updateBarIndexs();
     }
     else if (button == &undoButton)
     {
+        // Revert to previous bin mapping state
         audioProcessor.undoBinMap();
         freqDisplay.updateBarIndexs();
     }
     else if (button == &titleButton)
     {
+        // Toggle help overlay visibility
         help.setHelpVisible();
     }
 }
 
 void Dumumub0000004AudioProcessorEditor::updateProcessorOfBars()
 {
+    // Synchronize selection bar bounds with audio processor for bin mapping calculations
     audioProcessor.setSelectionBarLeft(selectionBar.getLeftBound());
     audioProcessor.setSelectionBarRight(selectionBar.getRightBound());
     audioProcessor.setDestinationBarLeft(destinationBar.getLeftBound());
     audioProcessor.setDestinationBarRight(destinationBar.getRightBound()); 
-
-
 }
 
