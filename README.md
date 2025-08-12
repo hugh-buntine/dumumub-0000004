@@ -7,12 +7,6 @@
 
 A sophisticated real-time frequency manipulation audio plugin built with JUCE framework, featuring interactive FFT-based spectral editing, frequency bin remapping, and live spectrum visualization for creative audio processing.
 
-## Plugin Interface
-
-![DUMUMUB Interface](DEMO%20MEDIA/INTERFACE.png)
-
-*Professional frequency manipulation interface with real-time spectrum visualization and interactive selection tools*
-
 ## Project Overview
 
 dumumub-0000004 is a professional-grade frequency manipulation plugin designed for digital audio workstations (DAWs). This project demonstrates advanced real-time DSP processing, FFT-based spectral analysis, and innovative frequency domain editing capabilities suitable for the audio technology industry.
