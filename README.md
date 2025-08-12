@@ -33,13 +33,13 @@ dumumub-0000004 is a professional-grade frequency manipulation plugin designed f
 - **Move Operation** - Real-time frequency bin remapping with visual feedback
 - **Undo System** - Complete operation history with instant reversion capability
 
-![Move Operation](DEMO%20MEDIA/MOVEBUTTON.gif)
-
-*Real-time frequency bin remapping using selection and destination tools*
-
 ![Slider Interaction](DEMO%20MEDIA/MOVESLIDERS.gif)
 
 *Interactive frequency range selection with draggable position controls*
+
+![Move Operation](DEMO%20MEDIA/MOVEBUTTON.gif)
+
+*Real-time frequency bin remapping using selection and destination tools*
 
 ![Undo System](DEMO%20MEDIA/UNDOBUTTON.gif)
 
@@ -56,7 +56,7 @@ dumumub-0000004 is a professional-grade frequency manipulation plugin designed f
 *Built-in interactive help overlay system with professional guidance*
 
 ### Professional Audio Processing
-- **Real-time Processing** - Zero-latency frequency manipulation during live audio
+- **Real-time Processing** - Low-latency frequency manipulation during live audio
 - **High-Quality FFT** - Custom OverlappingFFTProcessor with optimized performance
 - **Frequency Bin Remapping** - Sophisticated algorithm for seamless frequency content relocation
 - **State Persistence** - Complete session save/restore including all manipulation history
@@ -193,26 +193,6 @@ void FreqBar::calculateColour()
 - **Help Systems:** Non-intrusive user guidance and assistance
 - **Professional Polish:** Custom graphics, smooth animations, responsive controls
 
-## Project Structure & Architecture
-
-```
-dumumub-0000004/
-├── Source/
-│   ├── PluginProcessor.h/cpp      # Main audio processor
-│   ├── PluginEditor.h/cpp         # Main UI editor
-│   ├── FreqDisplay.h/cpp          # Spectrum visualization
-│   ├── FreqBar.h/cpp              # Individual frequency bars
-│   ├── SelectionBar.h/cpp         # Frequency range selector
-│   ├── DestinationBar.h/cpp       # Target position indicator
-│   ├── Help.h/cpp                 # Help overlay system
-│   ├── CanvasBorder.h             # UI frame component
-│   └── OverlappingFFTProcessor.h  # Custom FFT implementation
-├── GUI IMAGES/                    # Custom UI graphics assets
-├── DEMO MEDIA/                    # Documentation media
-├── JuceLibraryCode/              # Generated JUCE framework
-└── UML.txt                       # Complete architecture diagram
-```
-
 ## Build System & Dependencies
 
 ### Development Environment
@@ -244,14 +224,6 @@ The UML diagram illustrates:
 - **Composition relationships** between UI components
 - **Data flow** from audio processor to visualization
 - **Interface implementations** for event handling and timing
-
-## Performance Characteristics
-
-### Real-time Metrics
-- **Latency:** < 5ms processing delay
-- **CPU Usage:** < 15% on modern processors
-- **Memory Usage:** < 50MB total allocation
-- **Update Rate:** 30Hz spectrum visualization
 
 ### Optimization Techniques
 - **Lock-free Communication:** Audio thread never blocks
