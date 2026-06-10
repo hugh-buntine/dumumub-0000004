@@ -59,8 +59,8 @@ void SelectionBar::paint(juce::Graphics& g)
     {
         juce::String letter = juce::String::charToString(text[i]);
         g.drawText(letter, x - (0.025f * getWidth()), y, 
-                  g.getCurrentFont().getStringWidth(letter), 
-                  g.getCurrentFont().getHeight(), 
+                  GlyphArrangement::getStringWidthInt(g.getCurrentFont(), letter),
+                  (int) g.getCurrentFont().getHeight(),
                   juce::Justification::left);
         x += letterSpacing;
     }

@@ -9,23 +9,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "OverlappingFFTProcessor.h"
-
-
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
-#pragma once
-
-#include <JuceHeader.h>
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "OverlappingFFTProcessor.h"
 
 /**

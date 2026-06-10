@@ -24,7 +24,7 @@
  */
 
 #pragma once
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
 
 /**
  This processor takes care of buffering input and output samples for your FFT processing.
