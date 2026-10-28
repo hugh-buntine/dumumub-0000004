@@ -1,5 +1,6 @@
 # dumumub-0000004 Frequency Manipulation Plugin
 
+[![build](https://github.com/hugh-buntine/dumumub-0000004/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/hugh-buntine/dumumub-0000004/actions/workflows/build_and_test.yml)
 ![Plugin Interface](https://img.shields.io/badge/JUCE-Audio%20Plugin-blue)
 ![Language](https://img.shields.io/badge/C++-17-red)
 ![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-green)
@@ -241,3 +242,4 @@ Passionate about real-time audio processing, signal analysis, and innovative mus
 ---
 
 *This project demonstrates advanced proficiency in real-time audio processing, complex algorithm development, and professional software engineering practices suitable for roles in audio technology companies, signal processing firms, or high-performance software development teams requiring expertise in real-time systems and advanced C++ programming.*
+
